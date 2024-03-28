@@ -196,6 +196,11 @@ export default function DashProfile() {
             {updateUserSuccess}
         </Alert>
       )}
+      {updateUserError && (
+        <Alert color='failure' className='mt-5'>
+            {updateUserError}
+        </Alert>
+      )}
     </div>
   )
 }
