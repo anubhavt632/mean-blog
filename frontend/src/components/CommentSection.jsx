@@ -1,38 +1,35 @@
+import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Textarea, Button, Alert } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes
 import Comment from './Comment';
-import PropTypes from 'prop-types'; // Import PropTypes library
 
 export default function CommentSection({ postId }) {
     const { currentUser } = useSelector(state => state.user);
     const [comment, setComment] = useState('');
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);
-    console.log(comments);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Additional validation or action if needed
         if (comment.trim() === '' || comment.length > 200) {
-            // Possibly show an error message to the user
             return;
         }
         try {
             const res = await fetch('/backend/comment/create', {
                 method: 'POST',
-                headers: {  // It should be 'headers' not 'header'
+                headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ content: comment, postId: postId, userId: currentUser._id }),  // Ensure correct postId usage
+                body: JSON.stringify({ content: comment, postId: postId, userId: currentUser._id }),
             });
             const data = await res.json();
             if (res.ok) {
                 setComment('');
                 setCommentError(null);
                 setComments([data, ...comments]);
-                // Possibly handle success, e.g., displaying a success message or updating the list of comments
             }
         } catch (error) {
             setCommentError(error.message);
@@ -54,8 +51,37 @@ export default function CommentSection({ postId }) {
         getComments();
     }, [postId]);
 
+    const handleLike = async (commentId) => {
+        try {
+            if (!currentUser) {
+                navigate('/sign-in');
+                return;
+            }
+            const res = await fetch(`/backend/comment/likeComment/${commentId}`, {
+                method: 'PUT',
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setComments(
+                    comments.map((comment) =>
+                        comment._id === commentId
+                            ? {
+                                ...comment,
+                                likes: data.likes,
+                                numberOfLikes: data.likes.length,
+                            }
+                            : comment
+                    )
+                );
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
     return (
         <div className='max-w-2xl mx-auto w-full p-3'>
+            {/* Current user information */}
             {currentUser ? (
                 <div className="flex items-center gap-1 my-5 text-gray-500 text-sm">
                     <p>Signed in as:</p>
@@ -70,6 +96,7 @@ export default function CommentSection({ postId }) {
                     <Link className='text-blue-500 hover:underline' to={'/sign-in'}>Sign In</Link>
                 </div>
             )}
+            {/* Comment form */}
             {currentUser && (
                 <form onSubmit={handleSubmit} className='border border-teal-500 rounded-md p-3'>
                     <Textarea
@@ -85,6 +112,7 @@ export default function CommentSection({ postId }) {
                             Submit
                         </Button>
                     </div>
+                    {/* Display comment error */}
                     {commentError && (
                         <Alert color='failure' className='mt-5'>
                             {commentError}
@@ -92,6 +120,7 @@ export default function CommentSection({ postId }) {
                     )}
                 </form>
             )}
+            {/* Display comments */}
             {comments.length === 0 ? (
                 <p className='text-dm my-5'>No comments yet!</p>
             ) : (
@@ -102,8 +131,9 @@ export default function CommentSection({ postId }) {
                             <p>{comments.length}</p>
                         </div>
                     </div>
+                    {/* Render comments */}
                     {comments.map(comment => (
-                        <Comment key={comment._id} comment={comment} />
+                        <Comment key={comment._id} comment={comment} onLike={handleLike} />
                     ))}
                 </>
             )}
