@@ -57,7 +57,7 @@ export default function CommentSection({ postId }) {
                 navigate('/sign-in');
                 return;
             }
-            const res = await fetch(`/backend/comment/likeComment/${commentId}`, {
+            const res = await fetch(`/backend/comment/likeComment/${commentId}`,{
                 method: 'PUT',
             });
             if (res.ok) {
@@ -77,6 +77,13 @@ export default function CommentSection({ postId }) {
         } catch (error) {
             console.log(error.message);
         }
+    };
+    const handleEdit = async (comment, editedContent) => {
+        setComments(
+            comments.map((c) =>
+            c._id === comment._id ? { ...c, content: editedContent} : c
+            )
+        );
     };
 
     return (
@@ -133,7 +140,7 @@ export default function CommentSection({ postId }) {
                     </div>
                     {/* Render comments */}
                     {comments.map(comment => (
-                        <Comment key={comment._id} comment={comment} onLike={handleLike} />
+                        <Comment key={comment._id} comment={comment} onLike={handleLike} onEdit={handleEdit} />
                     ))}
                 </>
             )}
