@@ -90,7 +90,6 @@ export const updatepost = async (req, res, next) => {
             res.status(200).json(updatedPost);
     } catch (error) {
         next(error);
-
     }
 
 }
