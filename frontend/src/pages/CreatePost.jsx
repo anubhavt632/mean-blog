@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { Select, TextInput, FileInput, Button, Alert } from 'flowbite-react';
 import ReactQuill from 'react-quill';
@@ -36,6 +36,7 @@ export default function CreatePost() {
         (error) => {
           setImageUploadError('Image upload failed');
           setImageUploadProgress(null);
+          console.log(error.message);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -94,8 +95,12 @@ export default function CreatePost() {
           >
             <option value="uncategorized">Select a category</option>
             <option value="javascript">JavaScript</option>
-            <option value="reactjs">React.js</option>
-            <option value="nextjs">Next.js</option>
+            <option value="react.js">React.js</option>
+            <option value="next.js">Next.js</option>
+            <option value="three.js">Three.js</option>
+            <option value="angular">Angular</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
           </Select>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
