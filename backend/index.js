@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.route.js';
 import postRoutes from './routes/post.route.js';
 import commentRoutes from './routes/comment.route.js';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ mongoose
 ).catch((err)=>{
     console.log(err);
 });
+
+const __dirname = path.resolve;
 
 const app = express();
 
@@ -34,6 +37,14 @@ app.use('/backend/user', userRoutes);
 app.use('/backend/auth', authRoutes);
 app.use('/backend/post', postRoutes);
 app.use('/backend/comment', commentRoutes);
+
+// Serve static files from the backend dist folder
+app.use(express.static(path.join(__dirname, 'backend', 'dist')));
+
+// For all other routes, serve the frontend index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+});
 
 app.use((err, req, res, next)=>{
     const statusCode= err.statusCode || 500;
