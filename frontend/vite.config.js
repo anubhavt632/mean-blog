@@ -6,7 +6,7 @@ export default defineConfig({
   server:{
     proxy:{
       '/backend':{
-        target:'http://localhost:3000',
+        target:'https://mern-blog-rig7.onrender.com',
         secure:false,
       },
     },
