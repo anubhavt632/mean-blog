@@ -9,8 +9,6 @@ import cookieParser from 'cookie-parser';
 import path from "path";
 
 
-
-
 dotenv.config();
 
 mongoose
