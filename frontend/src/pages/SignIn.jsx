@@ -23,7 +23,7 @@ export default function SignIn() {
       dispatch(signInStart());
       const res = await fetch('https://mern-blog-rig7.onrender.com/backend/auth/signin', {
         method:'POST',
-        headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+        headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'},
         body:JSON.stringify(formData),
       });
       const data = await res.json();
