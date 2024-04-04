@@ -25,6 +25,7 @@ mongoose
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 app.use('/backend/user', userRoutes);
 app.use('/backend/auth', authRoutes);
